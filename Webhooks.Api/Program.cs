@@ -3,6 +3,7 @@ using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
 using Webhooks.Api.Data;
 using Webhooks.Api.Extensions;
+using Webhooks.Api.OpenTelemetry;
 using Webhooks.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +30,7 @@ builder.Services.AddSingleton(_ => Channel.CreateBounded<WebhookDispatch>(new Bo
 {
     FullMode = BoundedChannelFullMode.Wait
 }));
-
+builder.Services.AddOpenTelemetry().WithTracing(tracing => tracing.AddSource(DiagnosticConfig.Source.Name));
 var app = builder.Build();
 
 //Added by aspire

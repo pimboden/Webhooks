@@ -1,9 +1,11 @@
-﻿using System.Runtime.InteropServices.JavaScript;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
 using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
 using Webhooks.Api.Data;
 using Webhooks.Api.Models;
+using Webhooks.Api.OpenTelemetry;
 
 namespace Webhooks.Api.Services;
 
@@ -14,10 +16,12 @@ internal sealed class WebhookDispatcher(
 {
     public async Task DispatchAsync<T>(string eventType, T data, CancellationToken cancellationToken) where T : notnull
     {
-        await webhooksChannel.Writer.WriteAsync(new WebhookDispatch(eventType, data), cancellationToken);
+        using var activity = DiagnosticConfig.Source.StartActivity($"{eventType} dispatch webhook");
+        activity?.AddTag("event.type", eventType);
+        await webhooksChannel.Writer.WriteAsync(new WebhookDispatch(eventType, data, activity?.Id), cancellationToken);
     }
 
-    public async Task ProcessAsync<T>(string eventType, T data, CancellationToken cancellationToken)
+    public async Task ProcessAsync<T>(string eventType, T data,CancellationToken cancellationToken)
     {
         var subscriptions = await webhooksDbContext.WebhookSubscriptions
             .AsNoTracking()
