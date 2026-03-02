@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
 using Webhooks.Api.Data;
 using Webhooks.Api.Extensions;
@@ -23,6 +24,11 @@ builder.Services.AddDbContext<WebhooksDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("webhooks"));
 });
+builder.Services.AddHostedService<WebhookProcessor>();
+builder.Services.AddSingleton(_ => Channel.CreateBounded<WebhookDispatch>(new BoundedChannelOptions(100)
+{
+    FullMode = BoundedChannelFullMode.Wait
+}));
 
 var app = builder.Build();
 

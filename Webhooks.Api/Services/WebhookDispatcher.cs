@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
+using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
 using Webhooks.Api.Data;
 using Webhooks.Api.Models;
@@ -7,10 +8,16 @@ using Webhooks.Api.Models;
 namespace Webhooks.Api.Services;
 
 internal sealed class WebhookDispatcher(
+    Channel<WebhookDispatch> webhooksChannel,
     HttpClient httpClient,
     WebhooksDbContext webhooksDbContext)
 {
-    public async Task DispatchAsync<T>(string eventType, T data, CancellationToken cancellationToken)
+    public async Task DispatchAsync<T>(string eventType, T data, CancellationToken cancellationToken) where T : notnull
+    {
+        await webhooksChannel.Writer.WriteAsync(new WebhookDispatch(eventType, data), cancellationToken);
+    }
+
+    public async Task ProcessAsync<T>(string eventType, T data, CancellationToken cancellationToken)
     {
         var subscriptions = await webhooksDbContext.WebhookSubscriptions
             .AsNoTracking()
