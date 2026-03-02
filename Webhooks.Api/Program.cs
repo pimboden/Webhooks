@@ -1,27 +1,32 @@
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Webhooks.Api.Data;
 using Webhooks.Api.Extensions;
-using Webhooks.Api.Repositories;
 using Webhooks.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Added by aspire
 builder.AddServiceDefaults();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
-//InMemory repositories.. for POC no need of interfaces
 //Dependency Injections.
-builder.Services.AddSingleton<InMemorySampleDataRepository>();
-builder.Services.AddSingleton<InMemoryWebhookSubscriptionRepository>();
 
 //register services
 builder.Services.AddHttpClient<WebhookDispatcher>();
+builder.Services.AddDbContext<WebhooksDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("webhooks"));
+});
 
 var app = builder.Build();
 
+//Added by aspire
 app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
@@ -32,6 +37,7 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/v1/openapi.json", "v1");
     });
+    await  app.ApplyMigrationsAsync();
 }
 
 app.UseHttpsRedirection();

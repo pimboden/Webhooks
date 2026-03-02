@@ -1,4 +1,5 @@
-﻿using Webhooks.Api.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using Webhooks.Api.Data;
 
 namespace Webhooks.Api.Endpoints.SampleData;
 
@@ -7,8 +8,8 @@ public class Get : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("sampledata", async (
-                InMemorySampleDataRepository sampleDataRepository,
-                CancellationToken cancellationToken) => Results.Ok((object?)await sampleDataRepository.GetAllAsync(cancellationToken)))
+                WebhooksDbContext webhooksDbContext,
+                CancellationToken cancellationToken) => Results.Ok(await webhooksDbContext.SampleDataItems.ToListAsync(cancellationToken)))
             .WithTags("SampleData")
             .AllowAnonymous();
     }
