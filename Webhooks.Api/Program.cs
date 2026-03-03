@@ -1,4 +1,5 @@
 using System.Reflection;
+using ImTools;
 using Npgsql;
 using Webhooks.Api.Extensions;
 using Webhooks.Api.OpenTelemetry;
@@ -28,9 +29,11 @@ builder.Services.AddPersistence(builder.Configuration);
 builder.Host.UseWolverine(opts =>
 {
     opts.UseRabbitMq(new Uri(builder.Configuration.GetConnectionString("rabbitmq")!))
-        .AutoProvision();
+        .AutoProvision()
+        .DeclareExchange("Webhooks.Api.Services:WebhookDispatched")
+        .BindExchange("Webhooks.Api.Services:WebhookDispatched").ToQueue("webhook-dispatched");
 
-    opts.PublishMessage<WebhookDispatched>().ToRabbitQueue("webhook-dispatched");
+    opts.PublishMessage<WebhookDispatched>().ToRabbitExchange("Webhooks.Api.Services:WebhookDispatched");
 });
 
 builder.Services.AddOpenTelemetry().WithTracing(tracing =>

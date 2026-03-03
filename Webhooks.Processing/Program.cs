@@ -20,15 +20,17 @@ builder.Services.AddHttpClient<WebhookTriggeredHandler>();
 builder.Host.UseWolverine(opts =>
 {
     opts.UseRabbitMq(new Uri(builder.Configuration.GetConnectionString("rabbitmq")!))
-        .AutoProvision();
+        .AutoProvision()
+        .DeclareExchange("Webhooks.Api.Services:WebhookTriggered")
+        .BindExchange("Webhooks.Api.Services:WebhookTriggered").ToQueue("webhook-triggered");
 
     // Receive WebhookDispatched from Api
     opts.ListenToRabbitQueue("webhook-dispatched");
 
     // Route cascaded WebhookTriggered through RabbitMQ for parallel fanout
-    opts.PublishMessage<WebhookTriggered>().ToRabbitQueue("webhook-triggered");
+    opts.PublishMessage<WebhookTriggered>().ToRabbitExchange("Webhooks.Api.Services:WebhookTriggered");
     opts.ListenToRabbitQueue("webhook-triggered")
-        .ListenerCount(3); // tell RabbitMQ to push up to 10 at once
+        .ListenerCount(3); // tell RabbitMQ to push up to at once
 });
 
 builder.Services.AddOpenTelemetry().WithTracing(tracing =>
