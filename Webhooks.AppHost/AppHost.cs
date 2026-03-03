@@ -6,7 +6,7 @@ var database = builder.AddPostgres("postgres",password:pgPassword)
     .WithDataVolume()
     .WithHostPort(49959)
     .WithPgAdmin()
-    .AddDatabase("webhooks");
+    .AddDatabase("WebhooksDb");
 
 var queue = builder.AddRabbitMQ("rabbitmq")
     .WithDataVolume()

@@ -16,5 +16,5 @@ POST {{Webhooks.Api_HostAddress}}/api/webhooks/subscriptions
 Content-Type: application/json
 {
   "eventType": "sampledata.created",
-  "WebhookUrl": "https://webhook.site/d7dd6dc6-2069-4083-ba49-9a569ef539ee"
+  "WebhookUrl": "https://webhook.site/1a308cff-038f-4ed8-9af5-47d31220ea9f"
 }

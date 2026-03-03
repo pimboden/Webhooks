@@ -1,12 +1,12 @@
 using System.Reflection;
-using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Webhooks.Api.Extensions;
 using Webhooks.Api.OpenTelemetry;
 using Webhooks.Api.Services;
 using Webhooks.Infratructure;
-using Webhooks.Infratructure.Data;
+using Webhooks.Contracts;
+using Wolverine;
+using Wolverine.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,21 +25,19 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<WebhookDispatcher>();
 builder.Services.AddPersistence(builder.Configuration);
 
-builder.Services.AddMassTransit(busConfig =>
+builder.Host.UseWolverine(opts =>
 {
-    busConfig.SetKebabCaseEndpointNameFormatter();
-    busConfig.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host(builder.Configuration.GetConnectionString("rabbitmq"));
-        cfg.ConfigureEndpoints(context);
-    });
+    opts.UseRabbitMq(new Uri(builder.Configuration.GetConnectionString("rabbitmq")!))
+        .AutoProvision();
+
+    opts.PublishMessage<WebhookDispatched>().ToRabbitQueue("webhook-dispatched");
 });
 
 builder.Services.AddOpenTelemetry().WithTracing(tracing =>
 {
     tracing
         .AddSource(DiagnosticConfig.Source.Name)
-        .AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName)
+        .AddSource("Wolverine")
         .AddNpgsql();
 });
 

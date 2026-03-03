@@ -1,10 +1,11 @@
-using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using Webhooks.Api.Services;
-using Webhooks.Infratructure.Data;
-using Webhooks.Processing.OpenTelemetry;
 using Webhooks.Infratructure;
+using Webhooks.Processing.OpenTelemetry;
+using Webhooks.Processing.Services;
+using Webhooks.Contracts;
+using Wolverine;
+using Wolverine.RabbitMQ;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
@@ -13,25 +14,28 @@ builder.AddServiceDefaults();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddMassTransit(busConfig =>
+builder.Services.AddHttpClient<WebhookTriggeredHandler>();
+
+builder.Host.UseWolverine(opts =>
 {
-    busConfig.SetKebabCaseEndpointNameFormatter();
-    busConfig.AddConsumer<WebhookDispatchedConsumer>();
-    busConfig.AddConsumer<WebhookTriggeredConsumer>();
-    busConfig.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host(builder.Configuration.GetConnectionString("rabbitmq"));
-        cfg.ConfigureEndpoints(context);
-    });
+    opts.UseRabbitMq(new Uri(builder.Configuration.GetConnectionString("rabbitmq")!))
+        .AutoProvision();
+
+    // Receive WebhookDispatched from Api
+    opts.ListenToRabbitQueue("webhook-dispatched");
+
+    // Route cascaded WebhookTriggered through RabbitMQ for parallel fanout
+    opts.PublishMessage<WebhookTriggered>().ToRabbitQueue("webhook-triggered");
+    opts.ListenToRabbitQueue("webhook-triggered")
+        .ListenerCount(3); // tell RabbitMQ to push up to 10 at once
 });
 
 builder.Services.AddOpenTelemetry().WithTracing(tracing =>
 {
     tracing
         .AddSource(DiagnosticConfig.Source.Name)
-        .AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName)
+        .AddSource("Wolverine")
         .AddNpgsql();
 });
 
