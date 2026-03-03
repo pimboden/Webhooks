@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Webhooks.Api.DataBase.Migrations
+namespace Webhooks.Infratructure.DataBase.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialTables : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

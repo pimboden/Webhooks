@@ -1,7 +1,9 @@
 ﻿using System.Text.Json;
 using MassTransit;
-using Webhooks.Api.Data;
-using Webhooks.Api.Models;
+using Webhooks.Contracts;
+using Webhooks.Infratructure.Data;
+using Webhooks.Infratructure.Models;
+using Webhooks.Processing.Services;
 
 namespace Webhooks.Api.Services;
 

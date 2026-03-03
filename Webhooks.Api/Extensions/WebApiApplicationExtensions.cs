@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Webhooks.Api.Data;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+using Webhooks.Infratructure.Data;
 
 namespace Webhooks.Api.Extensions;
 
@@ -11,6 +13,11 @@ public static class WebApiApplicationExtensions
         {
             using var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<WebhooksDbContext>();
+            var creator = dbContext.GetService<IRelationalDatabaseCreator>();
+            if (!await creator.ExistsAsync(cancellationToken))
+            {
+                await creator.CreateAsync(cancellationToken);
+            }
             await dbContext.Database.MigrateAsync(cancellationToken);
         }
     }

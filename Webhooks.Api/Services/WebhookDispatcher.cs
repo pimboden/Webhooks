@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using Webhooks.Api.OpenTelemetry;
+using Webhooks.Contracts;
 
 namespace Webhooks.Api.Services;
 

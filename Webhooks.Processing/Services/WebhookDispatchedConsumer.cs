@@ -1,9 +1,7 @@
 ﻿using MassTransit;
-using MassTransit.Courier.Contracts;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using Webhooks.Api.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Webhooks.Contracts;
+using Webhooks.Infratructure.Data;
 
 namespace Webhooks.Api.Services;
 

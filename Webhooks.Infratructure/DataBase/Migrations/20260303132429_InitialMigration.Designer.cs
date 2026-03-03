@@ -2,27 +2,30 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Webhooks.Api.Data;
+using Webhooks.Infratructure.Data;
 
 #nullable disable
 
-namespace Webhooks.Api.DataBase.Migrations
+namespace Webhooks.Infratructure.DataBase.Migrations
 {
     [DbContext(typeof(WebhooksDbContext))]
-    partial class WebhooksDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260303132429_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.3")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Webhooks.Api.Models.SampleData", b =>
+            modelBuilder.Entity("Webhooks.Infratructure.Models.SampleData", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,7 +43,7 @@ namespace Webhooks.Api.DataBase.Migrations
                     b.ToTable("sample_data_items", (string)null);
                 });
 
-            modelBuilder.Entity("Webhooks.Api.Models.WebhookDeliveryAttempt", b =>
+            modelBuilder.Entity("Webhooks.Infratructure.Models.WebhookDeliveryAttempt", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,7 +72,7 @@ namespace Webhooks.Api.DataBase.Migrations
                     b.ToTable("delivery_attempts", "webhooks");
                 });
 
-            modelBuilder.Entity("Webhooks.Api.Models.WebhookSubscription", b =>
+            modelBuilder.Entity("Webhooks.Infratructure.Models.WebhookSubscription", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,9 +94,9 @@ namespace Webhooks.Api.DataBase.Migrations
                     b.ToTable("subscriptions", "webhooks");
                 });
 
-            modelBuilder.Entity("Webhooks.Api.Models.WebhookDeliveryAttempt", b =>
+            modelBuilder.Entity("Webhooks.Infratructure.Models.WebhookDeliveryAttempt", b =>
                 {
-                    b.HasOne("Webhooks.Api.Models.WebhookSubscription", null)
+                    b.HasOne("Webhooks.Infratructure.Models.WebhookSubscription", null)
                         .WithMany()
                         .HasForeignKey("WebhookSubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)

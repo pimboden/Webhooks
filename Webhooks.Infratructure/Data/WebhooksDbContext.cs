@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Webhooks.Api.Models;
+using Webhooks.Infratructure.Models;
 
-namespace Webhooks.Api.Data;
+namespace Webhooks.Infratructure.Data;
 
-internal sealed class WebhooksDbContext(DbContextOptions<WebhooksDbContext> options) : DbContext(options)
+public sealed class WebhooksDbContext(DbContextOptions<WebhooksDbContext> options) : DbContext(options)
 {
     public DbSet<SampleData> SampleDataItems { get; set; }
     public DbSet<WebhookSubscription> WebhookSubscriptions { get; set; }

@@ -1,7 +1,10 @@
-var builder = DistributedApplication.CreateBuilder(args);
+using Aspire.Hosting;
 
-var database = builder.AddPostgres("postgres")
+var builder = DistributedApplication.CreateBuilder(args);
+var pgPassword = builder.AddParameter("postgres-password", secret: true);
+var database = builder.AddPostgres("postgres",password:pgPassword)
     .WithDataVolume()
+    .WithHostPort(49959)
     .WithPgAdmin()
     .AddDatabase("webhooks");
 
@@ -14,5 +17,11 @@ builder.AddProject<Projects.Webhooks_Api>("webhooks-api")
     .WithReference(queue)
     .WaitFor(database)
     .WaitFor(queue);
+
+builder.AddProject<Projects.Webhooks_Processing>("webhooks-processing")
+    .WithReference(database)
+    .WithReference(queue)
+    .WaitFor(database)
+    .WaitFor(queue); ;
 
 builder.Build().Run();
