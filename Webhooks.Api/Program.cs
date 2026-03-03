@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Threading.Channels;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Webhooks.Api.Data;
 using Webhooks.Api.Extensions;
 using Webhooks.Api.OpenTelemetry;
@@ -20,17 +22,32 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 //Dependency Injections.
 
 //register services
-builder.Services.AddHttpClient<WebhookDispatcher>();
+builder.Services.AddScoped<WebhookDispatcher>();
 builder.Services.AddDbContext<WebhooksDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("webhooks"));
 });
-builder.Services.AddHostedService<WebhookProcessor>();
-builder.Services.AddSingleton(_ => Channel.CreateBounded<WebhookDispatch>(new BoundedChannelOptions(100)
+
+builder.Services.AddMassTransit(busConfig =>
 {
-    FullMode = BoundedChannelFullMode.Wait
-}));
-builder.Services.AddOpenTelemetry().WithTracing(tracing => tracing.AddSource(DiagnosticConfig.Source.Name));
+    busConfig.SetKebabCaseEndpointNameFormatter();
+    busConfig.AddConsumer<WebhookDispatchedConsumer>();
+    busConfig.AddConsumer<WebhookTriggeredConsumer>();
+    busConfig.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(builder.Configuration.GetConnectionString("rabbitmq"));
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
+builder.Services.AddOpenTelemetry().WithTracing(tracing =>
+{
+    tracing
+        .AddSource(DiagnosticConfig.Source.Name)
+        .AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName)
+        .AddNpgsql();
+});
+
 var app = builder.Build();
 
 //Added by aspire
