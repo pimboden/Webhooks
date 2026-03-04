@@ -1,5 +1,10 @@
 <Solution>
+  <Folder Name="/aspire/">
+    <Project Path="Webhooks.AppHost/Webhooks.AppHost.csproj" />
+    <Project Path="Webhooks.ServiceDefaults/Webhooks.ServiceDefaults.csproj" />
+  </Folder>
   <Project Path="Webhooks.Api/Webhooks.Api.csproj" />
-  <Project Path="Webhooks.AppHost/Webhooks.AppHost.csproj" />
-  <Project Path="Webhooks.ServiceDefaults/Webhooks.ServiceDefaults.csproj" />
+  <Project Path="Webhooks.Contracts/Webhooks.Contracts.csproj" Id="b5fcba6c-6eb1-4be5-87bd-ad0fcacdd3bf" />
+  <Project Path="Webhooks.Infratructure/Webhooks.Infrastructure.csproj" Id="cfa4c44d-da62-4451-95e1-92a8d226ecc8" />
+  <Project Path="Webhooks.Processing/Webhooks.Processing.csproj" />
 </Solution>

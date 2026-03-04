@@ -7,6 +7,8 @@ Content-Type: application/json
   "name": "Sample Data",
   "description": "This is a sample data object."
 }
+### Delete a sample data object
+DELETE {{Webhooks.Api_HostAddress}}/api/sampledata/{sample-data-id-here}
 
 ### Get all sample data objects 
 Get {{Webhooks.Api_HostAddress}}/api/sampledata 
@@ -16,5 +18,17 @@ POST {{Webhooks.Api_HostAddress}}/api/webhooks/subscriptions
 Content-Type: application/json
 {
   "eventType": "sampledata.created",
-  "WebhookUrl": "https://webhook.site/cb7ab743-7bdf-4e5e-8763-c4e28096ff9e"
+  "WebhookUrl": "https://webhook.site/1a308cff-038f-4ed8-9af5-47d31220ea9f"
 }
+
+### Get all webhook subscriptions
+GET {{Webhooks.Api_HostAddress}}/api/webhooks/subscriptions
+
+### Delete a webhook subscription
+DELETE {{Webhooks.Api_HostAddress}}/api/webhooks/subscriptions/{subscription-id-here}
+
+### Get all webhook delivery attempts
+GET {{Webhooks.Api_HostAddress}}/api/webhooks/delivery-attempts
+
+### Delete a webhook delivery attempt
+DELETE {{Webhooks.Api_HostAddress}}/api/webhooks/delivery-attempts/{delivery-attempt-id-here}

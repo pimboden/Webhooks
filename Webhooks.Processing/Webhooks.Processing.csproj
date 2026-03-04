@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>34fd07a9-5e69-4737-8628-2b5588a5fdc2</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+	  <PackageReference Include="Npgsql.OpenTelemetry" Version="10.0.1" />
+	  <PackageReference Include="WolverineFx" Version="5.17.0" />
+	  <PackageReference Include="WolverineFx.RabbitMQ" Version="5.17.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Webhooks.Contracts\Webhooks.Contracts.csproj" />
+    <ProjectReference Include="..\Webhooks.Infratructure\Webhooks.Infrastructure.csproj" />
+    <ProjectReference Include="..\Webhooks.ServiceDefaults\Webhooks.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+</Project>
