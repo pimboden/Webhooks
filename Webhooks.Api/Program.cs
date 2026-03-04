@@ -4,7 +4,7 @@ using Npgsql;
 using Webhooks.Api.Extensions;
 using Webhooks.Api.OpenTelemetry;
 using Webhooks.Api.Services;
-using Webhooks.Infratructure;
+using Webhooks.Infrastructure;
 using Webhooks.Contracts;
 using Wolverine;
 using Wolverine.RabbitMQ;
@@ -19,6 +19,16 @@ builder.AddServiceDefaults();
 builder.Services.AddOpenApi();
 
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:3001", "http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 //Dependency Injections.
 
@@ -60,7 +70,12 @@ if (app.Environment.IsDevelopment())
     await  app.ApplyMigrationsAsync();
 }
 
-app.UseHttpsRedirection();
+app.UseCors();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 
 

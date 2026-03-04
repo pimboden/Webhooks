@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Webhooks.Infratructure.Abstractions;
-using Webhooks.Infratructure.Data;
+using Webhooks.Infrastructure.Abstractions;
+using Webhooks.Infrastructure.Data;
 
-namespace Webhooks.Infratructure;
+namespace Webhooks.Infrastructure;
 
 public static class DependencyInjection
 {

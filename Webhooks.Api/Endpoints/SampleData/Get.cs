@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Webhooks.Infratructure.Data;
+using Webhooks.Infrastructure.Data;
 
 namespace Webhooks.Api.Endpoints.SampleData;
 

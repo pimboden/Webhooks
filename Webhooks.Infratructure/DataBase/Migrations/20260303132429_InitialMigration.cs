@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Webhooks.Infratructure.DataBase.Migrations
+namespace Webhooks.Infrastructure.DataBase.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

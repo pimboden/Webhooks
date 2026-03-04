@@ -1,4 +1,4 @@
-﻿namespace Webhooks.Infratructure.Models;
+﻿namespace Webhooks.Infrastructure.Models;
 
 public class WebhookDeliveryAttempt
 {

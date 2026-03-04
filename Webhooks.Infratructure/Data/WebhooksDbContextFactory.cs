@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace Webhooks.Infratructure.Data;
+namespace Webhooks.Infrastructure.Data;
 
 public sealed class WebhooksDbContextFactory : IDesignTimeDbContextFactory<WebhooksDbContext>
 {

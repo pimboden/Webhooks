@@ -12,11 +12,17 @@ var queue = builder.AddRabbitMQ("rabbitmq")
     .WithDataVolume()
     .WithManagementPlugin();
 
-builder.AddProject<Projects.Webhooks_Api>("webhooks-api")
+var api = builder.AddProject<Projects.Webhooks_Api>("webhooks-api")
     .WithReference(database)
     .WithReference(queue)
     .WaitFor(database)
     .WaitFor(queue);
+
+builder.AddJavaScriptApp("webhooks-ui", "../webhooks-ui", "dev")
+    .WithPnpm(install: true, installArgs: ["--frozen-lockfile"])
+    .WithHttpEndpoint(port: 3000, env: "PORT")
+    .WithReference(api)
+    .WaitFor(api);
 
 builder.AddProject<Projects.Webhooks_Processing>("webhooks-processing")
     .WithReplicas(3)

@@ -1,8 +1,8 @@
 ﻿using Npgsql;
 using System.Data;
-using Webhooks.Infratructure.Abstractions;
+using Webhooks.Infrastructure.Abstractions;
 
-namespace Webhooks.Infratructure.Data;
+namespace Webhooks.Infrastructure.Data;
 
 internal sealed class SqlConnectionFactory(string connectionString) : ISqlConnectionFactory
 {

@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Webhooks.Infratructure.Data;
+using Webhooks.Infrastructure.Data;
 
 #nullable disable
 
-namespace Webhooks.Infratructure.DataBase.Migrations
+namespace Webhooks.Infrastructure.DataBase.Migrations
 {
     [DbContext(typeof(WebhooksDbContext))]
     [Migration("20260303132429_InitialMigration")]
@@ -25,7 +25,7 @@ namespace Webhooks.Infratructure.DataBase.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Webhooks.Infratructure.Models.SampleData", b =>
+            modelBuilder.Entity("Webhooks.Infrastructure.Models.SampleData", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -43,7 +43,7 @@ namespace Webhooks.Infratructure.DataBase.Migrations
                     b.ToTable("sample_data_items", (string)null);
                 });
 
-            modelBuilder.Entity("Webhooks.Infratructure.Models.WebhookDeliveryAttempt", b =>
+            modelBuilder.Entity("Webhooks.Infrastructure.Models.WebhookDeliveryAttempt", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,7 +72,7 @@ namespace Webhooks.Infratructure.DataBase.Migrations
                     b.ToTable("delivery_attempts", "webhooks");
                 });
 
-            modelBuilder.Entity("Webhooks.Infratructure.Models.WebhookSubscription", b =>
+            modelBuilder.Entity("Webhooks.Infrastructure.Models.WebhookSubscription", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -94,9 +94,9 @@ namespace Webhooks.Infratructure.DataBase.Migrations
                     b.ToTable("subscriptions", "webhooks");
                 });
 
-            modelBuilder.Entity("Webhooks.Infratructure.Models.WebhookDeliveryAttempt", b =>
+            modelBuilder.Entity("Webhooks.Infrastructure.Models.WebhookDeliveryAttempt", b =>
                 {
-                    b.HasOne("Webhooks.Infratructure.Models.WebhookSubscription", null)
+                    b.HasOne("Webhooks.Infrastructure.Models.WebhookSubscription", null)
                         .WithMany()
                         .HasForeignKey("WebhookSubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)

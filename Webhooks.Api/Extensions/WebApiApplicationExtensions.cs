@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Webhooks.Infratructure.Data;
+using Webhooks.Infrastructure.Data;
 
 namespace Webhooks.Api.Extensions;
 

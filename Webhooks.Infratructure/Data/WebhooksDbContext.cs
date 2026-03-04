@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Webhooks.Infratructure.Models;
+using Webhooks.Infrastructure.Models;
 
-namespace Webhooks.Infratructure.Data;
+namespace Webhooks.Infrastructure.Data;
 
 public sealed class WebhooksDbContext(DbContextOptions<WebhooksDbContext> options) : DbContext(options)
 {

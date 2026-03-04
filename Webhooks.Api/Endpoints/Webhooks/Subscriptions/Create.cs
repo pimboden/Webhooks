@@ -1,6 +1,6 @@
 ﻿using Webhooks.Api.Models.Requests;
-using Webhooks.Infratructure.Data;
-using Webhooks.Infratructure.Models;
+using Webhooks.Infrastructure.Data;
+using Webhooks.Infrastructure.Models;
 
 namespace Webhooks.Api.Endpoints.Webhooks.Subscriptions;
 

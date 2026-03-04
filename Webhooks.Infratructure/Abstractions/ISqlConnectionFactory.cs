@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Webhooks.Infratructure.Abstractions
+namespace Webhooks.Infrastructure.Abstractions
 {
     public interface ISqlConnectionFactory
     {

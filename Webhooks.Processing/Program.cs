@@ -1,5 +1,5 @@
 using Npgsql;
-using Webhooks.Infratructure;
+using Webhooks.Infrastructure;
 using Webhooks.Processing.OpenTelemetry;
 using Webhooks.Processing.Services;
 using Webhooks.Contracts;

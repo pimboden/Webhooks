@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Webhooks.Contracts;
-using Webhooks.Infratructure.Data;
-using Webhooks.Infratructure.Models;
+using Webhooks.Infrastructure.Data;
+using Webhooks.Infrastructure.Models;
 
 namespace Webhooks.Processing.Services;
 
