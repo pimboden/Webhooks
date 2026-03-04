@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- RabbitMQ.Client v6.x targets netstandard2.0, compatible with .NET Framework 4.7.x -->
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+    <!-- System.Text.Json not built-in on netstandard2.0 -->
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Webhooks.EventDispatcher\Webhooks.EventDispatcher.csproj" />
+  </ItemGroup>
+
+</Project>

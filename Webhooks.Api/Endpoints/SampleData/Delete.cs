@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Webhooks.Api.Services;
+using Webhooks.EventDispatcher;
 using Webhooks.Infrastructure.Data;
 
 namespace Webhooks.Api.Endpoints.SampleData;
@@ -11,7 +11,7 @@ public class Delete : IEndpoint
         app.MapDelete("sampledata/{id:guid}", async (
                 Guid id,
                 WebhooksDbContext webhooksDbContext,
-                WebhookDispatcher webhookDispatcher,
+                IWebhookDispatcher webhookDispatcher,
                 CancellationToken cancellationToken) =>
             {
                 var sampleData = await webhooksDbContext.SampleDataItems

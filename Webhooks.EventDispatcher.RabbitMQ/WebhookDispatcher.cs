@@ -1,0 +1,57 @@
+using System.Text;
+using System.Text.Json;
+using RabbitMQ.Client;
+
+namespace Webhooks.EventDispatcher.RabbitMQ;
+
+/// <summary>
+/// IWebhookDispatcher implementation using RabbitMQ.Client directly.
+/// Compatible with .NET Framework 4.7.x and .NET Standard 2.0.
+/// Register as Singleton — it holds a long-lived RabbitMQ connection.
+/// </summary>
+internal sealed class WebhookDispatcher : IWebhookDispatcher, IDisposable
+{
+    private readonly string _exchangeName;
+    private readonly IConnection _connection;
+    private readonly IModel _channel;
+
+    internal WebhookDispatcher(EventDispatcherOptions options)
+    {
+        _exchangeName = options.ExchangeName;
+        var factory = new ConnectionFactory { Uri = new Uri(options.RabbitMqConnectionString) };
+        _connection = factory.CreateConnection();
+        _channel = _connection.CreateModel();
+
+        // Ensure the exchange exists (durable, non-auto-delete)
+        _channel.ExchangeDeclare(
+            exchange: _exchangeName,
+            type: ExchangeType.Direct,
+            durable: true,
+            autoDelete: false);
+    }
+
+    public Task DispatchAsync<T>(string eventType, T data, CancellationToken cancellationToken = default)
+        where T : notnull
+    {
+        var message = new WebhookDispatched(eventType, data);
+        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+
+        var props = _channel.CreateBasicProperties();
+        props.ContentType = "application/json";
+        props.DeliveryMode = 2; // persistent
+
+        _channel.BasicPublish(
+            exchange: _exchangeName,
+            routingKey: string.Empty,
+            basicProperties: props,
+            body: body);
+
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _channel?.Dispose();
+        _connection?.Dispose();
+    }
+}

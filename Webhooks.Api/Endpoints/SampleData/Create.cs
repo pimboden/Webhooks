@@ -1,5 +1,5 @@
 ﻿using Webhooks.Api.Models.Requests;
-using Webhooks.Api.Services;
+using Webhooks.EventDispatcher;
 using Webhooks.Infrastructure.Data;
 
 namespace Webhooks.Api.Endpoints.SampleData;
@@ -12,7 +12,7 @@ public class Create : IEndpoint
         app.MapPost("sampledata", async (
                 SampleDataCreateRequest request,
                 WebhooksDbContext webhooksDbContext,
-                WebhookDispatcher webhookDispatcher,
+                IWebhookDispatcher webhookDispatcher,
                 CancellationToken cancellationToken) =>
             {
 

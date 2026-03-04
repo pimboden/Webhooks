@@ -21,12 +21,11 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
     <PackageReference Include="Npgsql.OpenTelemetry" Version="10.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.4" />
-    <PackageReference Include="WolverineFx" Version="5.17.0" />
-    <PackageReference Include="WolverineFx.RabbitMQ" Version="5.17.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Webhooks.Contracts\Webhooks.Contracts.csproj" />
+    <!-- WolverineFx and WolverineFx.RabbitMQ come transitively from EventDispatcher.Wolverine -->
+    <ProjectReference Include="..\Webhooks.EventDispatcher.Wolverine\Webhooks.EventDispatcher.Wolverine.csproj" />
     <ProjectReference Include="..\Webhooks.Infratructure\Webhooks.Infrastructure.csproj" />
     <ProjectReference Include="..\Webhooks.ServiceDefaults\Webhooks.ServiceDefaults.csproj" />
   </ItemGroup>
