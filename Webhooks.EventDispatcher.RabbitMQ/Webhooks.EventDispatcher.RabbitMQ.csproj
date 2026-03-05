@@ -8,11 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- RabbitMQ.Client v6.x targets netstandard2.0, compatible with .NET Framework 4.7.x -->
-    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
-    <!-- System.Text.Json not built-in on netstandard2.0 -->
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <!-- Pin to 6.0.0 — matches the RabbitMQ.Client version installed in the consuming
+         .NET Framework WebForms project (packages.config). Keeps assembly references
+         identical so no binding redirects are needed. -->
+    <PackageReference Include="RabbitMQ.Client" Version="6.0.0" />
+    <!-- Use Newtonsoft.Json — already a first-class dependency of .NET Framework consumers
+         (e.g. WebForms). Avoids the transitive DLL distribution problem that System.Text.Json
+         causes when referenced from an old-style packages.config project. -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <!-- Pin System.Memory to 4.5.4 (assembly 4.0.1.1).
+         Prevents transitive resolution from pulling in 4.5.5 (assembly 4.0.1.2),
+         which would mismatch the 4.0.1.1 DLL already in the WebForms bin folder. -->
+    <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
 
   <ItemGroup>

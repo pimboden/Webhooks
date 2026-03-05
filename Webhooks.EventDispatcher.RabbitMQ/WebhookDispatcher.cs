@@ -1,5 +1,5 @@
 using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 
 namespace Webhooks.EventDispatcher.RabbitMQ;
@@ -22,10 +22,12 @@ internal sealed class WebhookDispatcher : IWebhookDispatcher, IDisposable
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
 
-        // Ensure the exchange exists (durable, non-auto-delete)
+        // Declare the exchange as fanout — must match the type Wolverine creates.
+        // Wolverine's DeclareExchange() defaults to fanout; mismatching types causes
+        // RabbitMQ to throw PRECONDITION_FAILED (code 406) if the exchange already exists.
         _channel.ExchangeDeclare(
             exchange: _exchangeName,
-            type: ExchangeType.Direct,
+            type: ExchangeType.Fanout,
             durable: true,
             autoDelete: false);
     }
@@ -34,11 +36,19 @@ internal sealed class WebhookDispatcher : IWebhookDispatcher, IDisposable
         where T : notnull
     {
         var message = new WebhookDispatched(eventType, data);
-        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+        var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
 
         var props = _channel.CreateBasicProperties();
         props.ContentType = "application/json";
         props.DeliveryMode = 2; // persistent
+
+        // Wolverine's RabbitMqEnvelopeMapper reads the message type from the built-in
+        // AMQP IBasicProperties.Type field (NOT from a custom header). The mapping is:
+        //   envelope.MessageType = props.Type   (on receive)
+        //   props.Type = envelope.MessageType   (on send)
+        // The value must match typeof(WebhookDispatched).FullName so Wolverine can
+        // look up the registered handler for "Webhooks.EventDispatcher.WebhookDispatched".
+        props.Type = typeof(WebhookDispatched).FullName!;
 
         _channel.BasicPublish(
             exchange: _exchangeName,

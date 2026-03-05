@@ -8,6 +8,7 @@
     <Project Path="Webhooks.EventDispatcher.Wolverine/Webhooks.EventDispatcher.Wolverine.csproj" />
     <Project Path="Webhooks.EventDispatcher.RabbitMQ/Webhooks.EventDispatcher.RabbitMQ.csproj" />
   </Folder>
+  <Project Path="WebForms/WebForms.csproj" Id="467ff4a2-ac6d-4a34-b433-a9efa094c977" />
   <Project Path="Webhooks.Api/Webhooks.Api.csproj" />
   <Project Path="Webhooks.Contracts/Webhooks.Contracts.csproj" Id="b5fcba6c-6eb1-4be5-87bd-ad0fcacdd3bf" />
   <Project Path="Webhooks.Infratructure/Webhooks.Infrastructure.csproj" Id="cfa4c44d-da62-4451-95e1-92a8d226ecc8" />
