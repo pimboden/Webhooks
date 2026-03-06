@@ -1,8 +1,59 @@
 # Webhooks POC — Getting Started Guide
 
+## Credits
+
+This POC is based on the excellent tutorial series by Milan Jovanović:
+**[Building a Webhook System in .NET](https://www.youtube.com/watch?v=vaVZSh8QqH8&list=PLYpjLpq5ZDGsnBmwJCdFv5PhQbUZruKy3)**
+
+The series walks through the design and implementation of a production-grade webhook fan-out system in .NET, covering subscriptions, reliable delivery, retries, and observability. Highly recommended watching before diving into this codebase.
+
+---
+
 ## Overview
 
 This POC demonstrates a webhook fan-out system where any event source (modern .NET API or legacy .NET Framework app) can fire a typed event, and all registered subscribers receive an HTTP POST to their configured URL.
+
+---
+
+## 0. Configure Required Secrets
+
+The solution uses **User Secrets** to keep passwords out of source control. Two projects need secrets configured before the first run.
+
+### Webhooks.AppHost (Aspire orchestrator)
+
+Run these commands from the `Webhooks.AppHost` project folder, or use **Visual Studio → right-click project → Manage User Secrets**:
+
+```bash
+cd Webhooks.AppHost
+
+dotnet user-secrets set "Parameters:postgres-password" "your-postgres-password"
+dotnet user-secrets set "Parameters:rabbitmq-password" "your-rabbitmq-password"
+```
+
+Choose any strong password for each. These values are injected at runtime into the PostgreSQL and RabbitMQ containers.
+
+### WebForms (legacy .NET Framework app)
+
+The WebForms project uses the older **XML-based** user secrets format. Open the secrets file for the WebForms project:
+
+```
+%APPDATA%\Microsoft\UserSecrets\4b6afb8e-bb6a-4061-82a1-a10dfa424c12\secrets.xml
+```
+
+> **Tip:** In Visual Studio, right-click the `WebForms` project → **Manage User Secrets** to open this file directly.
+
+Set the `rabbitmq` connection string, using the **same password** you set in `Parameters:rabbitmq-password` above:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <secrets ver="1.0">
+    <secret name="rabbitmq" value="amqp://guest:your-rabbitmq-password@localhost:5672" />
+  </secrets>
+</root>
+```
+
+> **Important:** The password in the WebForms `secrets.xml` must match `Parameters:rabbitmq-password` in the AppHost secrets exactly, since WebForms connects directly to RabbitMQ on `localhost:5672`.
 
 ---
 
