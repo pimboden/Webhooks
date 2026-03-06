@@ -13,7 +13,7 @@ const { data: items, refresh, status } = await useFetch<WebhookSubscription[]>(
   `${apiBase}/api/webhooks/subscriptions`
 )
 
-const EVENT_TYPES = ['sampledata.created', 'sampledata.deleted']
+const EVENT_TYPES = ['sampledata.created', 'sampledata.deleted', 'webform.fired']
 
 const showForm = ref(false)
 const form = reactive({ eventType: EVENT_TYPES[0], webhookUrl: '' })
@@ -51,9 +51,10 @@ function formatDate(utc: string) {
   return new Date(utc).toLocaleString()
 }
 
-const eventTypeColor: Record<string, 'primary' | 'success'> = {
+const eventTypeColor: Record<string, 'primary' | 'success' | 'secondary'> = {
   'sampledata.created': 'success',
-  'sampledata.deleted': 'primary',
+  'sampledata.deleted': 'secondary',
+   'webform.fired': 'primary'
 }
 
 const copiedId = ref<string | null>(null)

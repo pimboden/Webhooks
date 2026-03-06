@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Webhooks.Contracts\Webhooks.Contracts.csproj" />
+    <ProjectReference Include="..\Webhooks.EventDispatcher\Webhooks.EventDispatcher.csproj" />
     <ProjectReference Include="..\Webhooks.Infratructure\Webhooks.Infrastructure.csproj" />
     <ProjectReference Include="..\Webhooks.ServiceDefaults\Webhooks.ServiceDefaults.csproj" />
   </ItemGroup>

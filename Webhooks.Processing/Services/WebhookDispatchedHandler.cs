@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Webhooks.Contracts;
+using Webhooks.EventDispatcher;
 using Webhooks.Infrastructure.Data;
 
 namespace Webhooks.Processing.Services;

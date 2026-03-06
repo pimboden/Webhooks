@@ -1,13 +1,8 @@
 using System.Reflection;
-using ImTools;
 using Npgsql;
 using Webhooks.Api.Extensions;
-using Webhooks.Api.OpenTelemetry;
-using Webhooks.Api.Services;
+using Webhooks.EventDispatcher.Wolverine;
 using Webhooks.Infrastructure;
-using Webhooks.Contracts;
-using Wolverine;
-using Wolverine.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
@@ -30,26 +24,20 @@ builder.Services.AddCors(options =>
     });
 });
 
-//Dependency Injections.
-
-//register services
-builder.Services.AddScoped<WebhookDispatcher>();
 builder.Services.AddPersistence(builder.Configuration);
 
-builder.Host.UseWolverine(opts =>
+// Registers IWebhookDispatcher + configures Wolverine + RabbitMQ in one call
+builder.Host.AddEventDispatcher(opts =>
 {
-    opts.UseRabbitMq(new Uri(builder.Configuration.GetConnectionString("rabbitmq")!))
-        .AutoProvision()
-        .DeclareExchange("Webhooks.Api.Services:WebhookDispatched")
-        .BindExchange("Webhooks.Api.Services:WebhookDispatched").ToQueue("webhook-dispatched");
-
-    opts.PublishMessage<WebhookDispatched>().ToRabbitExchange("Webhooks.Api.Services:WebhookDispatched");
+    opts.RabbitMqConnectionString = builder.Configuration.GetConnectionString("rabbitmq")!;
+    // opts.ExchangeName defaults to "webhook.dispatched.exchange"
+    // opts.QueueName   defaults to "webhook-dispatched"  ← must match Webhooks.Processing
 });
 
 builder.Services.AddOpenTelemetry().WithTracing(tracing =>
 {
     tracing
-        .AddSource(DiagnosticConfig.Source.Name)
+        .AddSource(EventDispatcherDiagnostics.ActivitySourceName)
         .AddSource("Wolverine")
         .AddNpgsql();
 });
@@ -67,7 +55,7 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/v1/openapi.json", "v1");
     });
-    await  app.ApplyMigrationsAsync();
+    await app.ApplyMigrationsAsync();
 }
 
 app.UseCors();
@@ -77,14 +65,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-
-
-
 var routGroupBuilder = app.MapGroup("api");
 
 // Map endpoints to the versioned route group
 app.MapEndpoints(routGroupBuilder);
 
-
 app.Run();
-
